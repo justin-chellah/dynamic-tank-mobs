@@ -16,6 +16,7 @@ ConVar z_tank_mob_spawn_min_size = null;
 ConVar z_tank_mob_spawn_max_size = null;
 ConVar z_tank_mob_spawn_min_interval = null;
 ConVar z_tank_mob_spawn_max_interval = null;
+ConVar z_tank_mob_bile_spawn_size = null;
 
 int CalcMobSize()
 {
@@ -93,6 +94,16 @@ public MRESReturn DDetour_CDirector_GetScriptValueInt( Address addrTheDirector, 
 		return MRES_ChangedHandled;
 	}
 
+	if ( CDirector_IsTankInPlay() )
+	{
+		if ( StrEqual( szKey, "BileMobSize" ) )
+		{			
+			hParams.Set( 2, z_tank_mob_bile_spawn_size.IntValue );
+
+			return MRES_ChangedHandled;
+		}
+	}
+
 	return MRES_Ignored;
 }
 
@@ -105,16 +116,24 @@ public void OnPluginStart()
 		SetFailState( "Unable to load gamedata file \"" ... GAMEDATA_FILE ... "\"" );
 	}
 
-	MemoryPatch hMemoryPatcher = MemoryPatch.CreateFromConf( hGameData, "Spawn mob condition" );
-
-	if ( !hMemoryPatcher.Validate() )
-	{
-		delete hGameData;
-
-		SetFailState( "Unable to validate patch for \"Spawn mob condition\"" );
+#define MEMORY_PATCH_WRAPPER(%0,%1)\
+	%1 = MemoryPatch.CreateFromConf( hGameData, %0 );\
+	\
+	if ( !%1.Validate() )\
+	{\
+		delete hGameData;\
+		\
+		SetFailState( "Unable to validate patch for \"" ... %0 ... "\"" );\
 	}
 
-	hMemoryPatcher.Enable();
+	MemoryPatch hSpawnMobConditionPatcher;
+	MEMORY_PATCH_WRAPPER( "Spawn mob condition", hSpawnMobConditionPatcher )
+
+	MemoryPatch hBileMobSizeConditionPatcher;
+	MEMORY_PATCH_WRAPPER( "BileMobSize condition", hBileMobSizeConditionPatcher )
+
+	hSpawnMobConditionPatcher.Enable();
+	hBileMobSizeConditionPatcher.Enable();
 
 	g_addrTheDirector = hGameData.GetAddress( "CDirector" );
 
@@ -171,6 +190,7 @@ public void OnPluginStart()
 	z_tank_mob_spawn_max_size = CreateConVar( "z_tank_mob_spawn_max_size", "10" );
 	z_tank_mob_spawn_min_interval = CreateConVar( "z_tank_mob_spawn_min_interval", "10.0" );
 	z_tank_mob_spawn_max_interval = CreateConVar( "z_tank_mob_spawn_max_interval", "20.0" );
+	z_tank_mob_bile_spawn_size = CreateConVar( "z_tank_mob_bile_spawn_size", "15" );
 
 	HookEvent( "tank_spawn", Event_tank_spawn, EventHookMode_PostNoCopy );
 }
@@ -180,6 +200,6 @@ public Plugin myinfo =
 	name = "[L4D/2] Dynamic Tank Mobs",
 	author = "Justin \"Sir Jay\" Chellah",
 	description = "Spawns small mobs through the AI Director in time intervals to assist the Tank against the survivors",
-	version = "1.0.0",
+	version = "1.1.0",
 	url = "https://justin-chellah.com"
 };

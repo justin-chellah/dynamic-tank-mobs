@@ -1,13 +1,17 @@
 # [L4D/2] Dynamic Tank Mobs
 This is a SourceMod Plugin that spawns small mobs while the Tank is in the game. This was originally made for PvP game modes such as Versus. You might have to tweak some Director intensity CVars if you want to use it in Co-op.
 
+You can also control the amount of zombies that spawn when someone got vomited upon in either team while the Tank is in the game.
+
 # CVars
 - `z_tank_mob_spawn_min_size` (set to `5` by default)
 - `z_tank_mob_spawn_max_size` (set to `10` by default)
 - `z_tank_mob_spawn_min_interval` (set to `10.0` by default)
 - `z_tank_mob_spawn_max_interval` (set to `20.0` by default)
+- `z_tank_mob_bile_spawn_size` (set to `15` by default)
 
 # Example VScript Code
+Note: This will override the ConVars.
 ```
 DirectorOptions <-
 {
@@ -15,6 +19,7 @@ DirectorOptions <-
 	MobMinSize = 10
 	MobSpawnMinTime = 10.0
 	MobSpawnMaxTime = 20.0
+	BileMobSize = 15
 }
 ```
 
