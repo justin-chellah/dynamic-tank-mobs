@@ -6,20 +6,20 @@
 		{
 			"CDirector::m_mobSpawnTimer"
 			{
-				"windows"	"468"
-				"linux"		"468"
+				"windows"	"660"
+				"linux"		"660"
 			}
 
 			"CDirector::m_flMobSpawnSize"
 			{
-				"windows"	"708"
-				"linux"		"708"
+				"windows"	"900"
+				"linux"		"900"
 			}
 
 			"CDirector::m_iTankCount"
 			{
-				"windows"	"256"
-				"linux"		"256"
+				"windows"	"448"
+				"linux"		"448"
 			}
 		}
 
